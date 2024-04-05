@@ -1,8 +1,9 @@
-package log
+package s
 
 import (
 	"context"
-	"greet-skeleton/util/elasticsearch"
+
+	"greet-util/s/elasticsearch"
 )
 
 const (

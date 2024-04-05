@@ -1,11 +1,9 @@
-package response
+package s
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"greet-skeleton/util/date"
-	"greet-skeleton/util/log"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -277,7 +275,7 @@ func (e *Error) Send(c echo.Context) error {
 
 	go func() {
 		retries := 3
-		logError := log.LogError{
+		logError := LogError{
 			ID:           shortid.MustGenerate(),
 			Header:       string(bHeader),
 			Body:         string(body),
@@ -288,10 +286,10 @@ func (e *Error) Send(c echo.Context) error {
 			AppName:      os.Getenv("APP"),
 			Version:      os.Getenv("VERSION"),
 			Env:          os.Getenv("ENV"),
-			CreatedAt:    *date.DateTodayLocal(),
+			CreatedAt:    *DateTodayLocal(),
 		}
 		for i := 0; i < retries; i++ {
-			err := log.InsertErrorLog(context.Background(), &logError)
+			err := InsertErrorLog(context.Background(), &logError)
 			if err == nil {
 				break
 			}
