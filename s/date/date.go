@@ -1,4 +1,4 @@
-package s
+package date
 
 import (
 	"fmt"

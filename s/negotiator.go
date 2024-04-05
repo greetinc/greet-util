@@ -1,6 +1,7 @@
-package s
+package util
 
 import (
+	"aseprayana-skeleton-go/entity"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -14,22 +15,15 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
 	"github.com/h2non/filetype"
 	"github.com/labstack/echo/v4"
-	"github.com/lib/pq"
 	"golang.org/x/text/currency"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 	"gopkg.in/gomail.v2"
 )
-
-type RadiusRange struct {
-	ID        string  `gorm:"primary_key" json:"id"`
-	UserID    string  `gorm:"type:varchar(36);index" json:"user_id"`
-	Longitude float64 `gorm:"longitude" json:"longitude"`
-	Latitude  float64 `gorm:"latitude" json:"latitude"`
-}
 
 // func NewMailer() *gomail.Dialer {
 // 	// Replace the following information with your Mailtrap.io credentials
@@ -49,7 +43,7 @@ type RadiusRange struct {
 // 	clientURL := os.Getenv("CLIENT_URL")
 // 	if clientURL == "" {
 // 		// Provide a default value or handle the missing configuration accordingly
-// 		clientURL = "http://localhost:2345"
+// 		clientURL = "http://localhost:8080"
 // 	}
 // 	return clientURL
 // }
@@ -79,12 +73,6 @@ func IsValidEmail(email string) bool {
 	return err == nil && matched
 }
 
-func IsDuplicateEntryError(err error) bool {
-	if pqErr, ok := err.(*pq.Error); ok {
-		return pqErr.Code.Name() == "unique_violation"
-	}
-	return false
-}
 func Mailtrap(to, otp string) error {
 	mailer := gomail.NewMessage()
 	mailer.SetHeader("From", "aseprayana95@gmail.com")
@@ -94,7 +82,7 @@ func Mailtrap(to, otp string) error {
 	mailer.SetBody("text/html", fmt.Sprintf("Your verification code is: <strong>%s</strong>", otp))
 	//click button at email and verify
 	// mailer.SetBody("text/html", fmt.Sprintf("Hello, this is a test email from "+
-	// "Mailtrap: <a href='http://localhost:2345/verify/%s'>Verify Account</a>Your verification code is: <strong>%s</strong>",
+	// "Mailtrap: <a href='http://localhost:8080/verify/%s'>Verify Account</a>Your verification code is: <strong>%s</strong>",
 	// verificationToken, otp))
 
 	dialer := gomail.NewDialer("smtp.mailtrap.io", 587, "126a08e0c5ff69", "9f8b22657e0257")
@@ -161,6 +149,12 @@ func ValidateFileType(filePath string) error {
 	return errors.New("invalid file type")
 }
 
+func IsDuplicateEntryError(err error) bool {
+	if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+		return mysqlErr.Number == 1062
+	}
+	return false
+}
 func GetVerificationLink(token string) string {
 	baseURL := "http://localhost" // Ganti dengan URL aplikasi Anda
 	return fmt.Sprintf("%s/verify/%s", baseURL, token)
@@ -239,12 +233,7 @@ func EncryptFileName(originalFileName string) (string, error) {
 	return hex.EncodeToString(encryptedFileName), nil
 }
 
-// Convert degrees to radians
-func degToRad(deg float64) float64 {
-	return deg * (math.Pi / 180)
-}
-
-func Haversine(coord1, coord2 RadiusRange) float64 {
+func Haversine(coord1, coord2 entity.RadiusRange) float64 {
 	const earthRadius = 6371000 // Earth radius in meters
 
 	// Convert degrees to radians
@@ -264,4 +253,9 @@ func Haversine(coord1, coord2 RadiusRange) float64 {
 	// Distance in meters
 	distance := earthRadius * c
 	return distance
+}
+
+// Convert degrees to radians
+func degToRad(deg float64) float64 {
+	return deg * (math.Pi / 180)
 }

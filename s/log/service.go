@@ -1,9 +1,9 @@
-package s
+package log
 
 import (
 	"context"
 
-	"github.com/greetinc/greet-util/elasticsearch"
+	"github.com/greetinc/greet-util/s/elasticsearch"
 )
 
 const (

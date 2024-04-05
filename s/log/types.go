@@ -1,4 +1,4 @@
-package s
+package log
 
 import (
 	"time"

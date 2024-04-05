@@ -1,6 +1,8 @@
-package s
+package response
 
 import (
+	"aseprayana-skeleton-go/util/date"
+	"aseprayana-skeleton-go/util/log"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -275,7 +277,7 @@ func (e *Error) Send(c echo.Context) error {
 
 	go func() {
 		retries := 3
-		logError := LogError{
+		logError := log.LogError{
 			ID:           shortid.MustGenerate(),
 			Header:       string(bHeader),
 			Body:         string(body),
@@ -286,10 +288,10 @@ func (e *Error) Send(c echo.Context) error {
 			AppName:      os.Getenv("APP"),
 			Version:      os.Getenv("VERSION"),
 			Env:          os.Getenv("ENV"),
-			CreatedAt:    *DateTodayLocal(),
+			CreatedAt:    *date.DateTodayLocal(),
 		}
 		for i := 0; i < retries; i++ {
-			err := InsertErrorLog(context.Background(), &logError)
+			err := log.InsertErrorLog(context.Background(), &logError)
 			if err == nil {
 				break
 			}
