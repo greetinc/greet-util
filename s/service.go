@@ -3,7 +3,7 @@ package s
 import (
 	"context"
 
-	"greet-util/s/elasticsearch"
+	"github.com/greetinc/greet-util/s/elasticsearch"
 )
 
 const (

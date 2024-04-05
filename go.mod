@@ -1,4 +1,4 @@
-module greet-util
+module github.com/greetinc/greet-util/util/s
 
 go 1.21.0
 

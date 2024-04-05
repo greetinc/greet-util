@@ -24,6 +24,13 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
+type RadiusRange struct {
+	ID        string  `gorm:"primary_key" json:"id"`
+	UserID    string  `gorm:"type:varchar(36);index" json:"user_id"`
+	Longitude float64 `gorm:"longitude" json:"longitude"`
+	Latitude  float64 `gorm:"latitude" json:"latitude"`
+}
+
 // func NewMailer() *gomail.Dialer {
 // 	// Replace the following information with your Mailtrap.io credentials
 // 	username := "7de3a28724e886"
@@ -235,4 +242,26 @@ func EncryptFileName(originalFileName string) (string, error) {
 // Convert degrees to radians
 func degToRad(deg float64) float64 {
 	return deg * (math.Pi / 180)
+}
+
+func Haversine(coord1, coord2 RadiusRange) float64 {
+	const earthRadius = 6371000 // Earth radius in meters
+
+	// Convert degrees to radians
+	lat1 := degToRad(coord1.Latitude)
+	lon1 := degToRad(coord1.Longitude)
+	lat2 := degToRad(coord2.Latitude)
+	lon2 := degToRad(coord2.Longitude)
+
+	// Calculate differences
+	dlat := lat2 - lat1
+	dlon := lon2 - lon1
+
+	// Haversine formula
+	a := math.Pow(math.Sin(dlat/2), 2) + math.Cos(lat1)*math.Cos(lat2)*math.Pow(math.Sin(dlon/2), 2)
+	c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
+
+	// Distance in meters
+	distance := earthRadius * c
+	return distance
 }
