@@ -1,14 +1,15 @@
 package response
 
 import (
-	"aseprayana-skeleton-go/util/date"
-	"aseprayana-skeleton-go/util/log"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
+
+	"github.com/greetinc/greet-util/s/date"
+	"github.com/greetinc/greet-util/s/log"
 
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"

@@ -1,7 +1,6 @@
 package response
 
 import (
-	dto "aseprayana-skeleton-go/dto/transaction"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -37,17 +36,6 @@ type Success struct {
 func SuccessBuilder(res *Success, data interface{}) *Success {
 	res.Response.Data = data
 	return res
-}
-
-func CustomSuccessBuilder(code int, data interface{}, message string, info *dto.PaginationResponse) *Success {
-	return &Success{
-		Response: successResponse{
-			Status:  true,
-			Message: message,
-			Data:    data,
-		},
-	}
-
 }
 
 func SuccessResponse(data interface{}) *Success {

@@ -1,7 +1,6 @@
 package util
 
 import (
-	"aseprayana-skeleton-go/entity"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -15,10 +14,10 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
 	"github.com/h2non/filetype"
 	"github.com/labstack/echo/v4"
+	"github.com/lib/pq"
 	"golang.org/x/text/currency"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
@@ -150,8 +149,8 @@ func ValidateFileType(filePath string) error {
 }
 
 func IsDuplicateEntryError(err error) bool {
-	if mysqlErr, ok := err.(*mysql.MySQLError); ok {
-		return mysqlErr.Number == 1062
+	if pqErr, ok := err.(*pq.Error); ok {
+		return pqErr.Code.Name() == "unique_violation"
 	}
 	return false
 }
@@ -233,7 +232,14 @@ func EncryptFileName(originalFileName string) (string, error) {
 	return hex.EncodeToString(encryptedFileName), nil
 }
 
-func Haversine(coord1, coord2 entity.RadiusRange) float64 {
+type RadiusRange struct {
+	ID        string  `gorm:"primary_key" json:"id"`
+	UserID    string  `gorm:"type:varchar(36);index" json:"user_id"`
+	Longitude float64 `gorm:"longitude" json:"longitude"`
+	Latitude  float64 `gorm:"latitude" json:"latitude"`
+}
+
+func Haversine(coord1, coord2 RadiusRange) float64 {
 	const earthRadius = 6371000 // Earth radius in meters
 
 	// Convert degrees to radians
