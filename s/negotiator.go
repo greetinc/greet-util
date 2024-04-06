@@ -14,6 +14,8 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/greetinc/greet-auth-srv/entity"
+
 	"github.com/google/uuid"
 	"github.com/h2non/filetype"
 	"github.com/labstack/echo/v4"
@@ -232,14 +234,7 @@ func EncryptFileName(originalFileName string) (string, error) {
 	return hex.EncodeToString(encryptedFileName), nil
 }
 
-type RadiusRange struct {
-	ID        string  `gorm:"primary_key" json:"id"`
-	UserID    string  `gorm:"type:varchar(36);index" json:"user_id"`
-	Longitude float64 `gorm:"longitude" json:"longitude"`
-	Latitude  float64 `gorm:"latitude" json:"latitude"`
-}
-
-func Haversine(coord1, coord2 RadiusRange) float64 {
+func Haversine(coord1, coord2 entity.RadiusRange) float64 {
 	const earthRadius = 6371000 // Earth radius in meters
 
 	// Convert degrees to radians
