@@ -14,7 +14,7 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/greetinc/greet-util/entity"
+	"github.com/greetinc/greet-auth-srv/entity"
 
 	"github.com/google/uuid"
 	"github.com/h2non/filetype"
