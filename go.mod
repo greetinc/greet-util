@@ -4,7 +4,7 @@ go 1.21.0
 
 require (
 	github.com/google/uuid v1.6.0
-	github.com/greetinc/greet-auth-srv v0.0.0-20240405071853-90ea8bc6b418
+	github.com/greetinc/greet-auth-srv v0.0.0-20240406041837-07ec07f2d96c
 	github.com/h2non/filetype v1.1.3
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/lib/pq v1.10.9
