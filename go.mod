@@ -4,7 +4,7 @@ go 1.21.0
 
 require (
 	github.com/google/uuid v1.6.0
-	github.com/greetinc/greet-auth-srv v0.0.0-20240406041837-07ec07f2d96c
+	github.com/greetinc/greet-auth-srv v0.0.0-20240423030823-1ff51bb94abc
 	github.com/h2non/filetype v1.1.3
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/lib/pq v1.10.9
@@ -18,6 +18,7 @@ require (
 )
 
 require (
+	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	gorm.io/gorm v1.25.9 // indirect
