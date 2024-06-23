@@ -340,8 +340,12 @@ func FormatPhoneNumber(phone, country string) (string, error) {
 	}
 
 	// Jika nomor telepon dimulai dengan '0', ganti '0' dengan kode negara
-	if strings.HasPrefix(phone, "0") {
-		return code + phone[1:], nil
+	if strings.HasPrefix(phone, code) {
+		// Jika nomor telepon dimulai dengan '0' setelah kode negara
+		if strings.HasPrefix(phone, code+"0") {
+			return code + phone[len(code)+1:], nil
+		}
+		return phone, nil
 	}
 
 	// Jika nomor telepon dimulai dengan '+', kembalikan error
