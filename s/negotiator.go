@@ -310,6 +310,14 @@ var CountryCodes = map[string]string{
 	"Zimbabwe":                         "+263",
 }
 
+func GetCountryCode(country string) (string, error) {
+	code, ok := CountryCodes[country]
+	if !ok {
+		return "", fmt.Errorf("country code not found for %s", country)
+	}
+	return code, nil
+}
+
 func IsValidEmail(email string) bool {
 	// This is a basic email validation regex, it may not cover all cases
 	emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
