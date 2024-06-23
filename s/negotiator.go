@@ -13,6 +13,7 @@ import (
 	"mime/multipart"
 	"os"
 	"regexp"
+	"strings"
 
 	"github.com/greetinc/greet-auth-srv/entity"
 
@@ -316,6 +317,40 @@ func GetCountryCode(country string) (string, error) {
 		return "", fmt.Errorf("country code not found for %s", country)
 	}
 	return code, nil
+}
+
+// FormatPhoneNumber memformat nomor telepon berdasarkan kode negara
+func FormatPhoneNumber(phone, country string) (string, error) {
+	// Hilangkan semua spasi dan tanda penghubung dari nomor telepon
+	phone = strings.ReplaceAll(phone, " ", "")
+	phone = strings.ReplaceAll(phone, "-", "")
+	phone = strings.ReplaceAll(phone, ",", "")
+	phone = strings.ReplaceAll(phone, ".", "")
+	phone = strings.ReplaceAll(phone, "e", "")
+
+	// Ambil kode negara dari peta CountryCodes
+	code, exists := CountryCodes[country]
+	if !exists {
+		return "", errors.New("invalid country")
+	}
+
+	// Jika nomor telepon sudah dimulai dengan kode negara, kembalikan nomor tersebut
+	if strings.HasPrefix(phone, code) {
+		return phone, nil
+	}
+
+	// Jika nomor telepon dimulai dengan '0', ganti '0' dengan kode negara
+	if strings.HasPrefix(phone, "0") {
+		return code + phone[1:], nil
+	}
+
+	// Jika nomor telepon dimulai dengan '+', kembalikan error
+	if strings.HasPrefix(phone, "+") {
+		return "", errors.New("invalid phone number format")
+	}
+
+	// Tambahkan kode negara di depan nomor telepon
+	return code + phone, nil
 }
 
 func IsValidEmail(email string) bool {
