@@ -601,3 +601,10 @@ func Decrypt(cipherText string) (string, error) {
 
 	return string(plainText[:len(plainText)-padding]), nil
 }
+
+func TruncateFullName(name string, maxLen int) string {
+	if len(name) > maxLen {
+		return name[:maxLen] + "..."
+	}
+	return name
+}
