@@ -1,10 +1,12 @@
 package util
 
 import (
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
 	"crypto/tls"
+	"encoding/base64"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -549,4 +551,53 @@ func Haversine(coord1, coord2 entity.RadiusRange) float64 {
 // Convert degrees to radians
 func degToRad(deg float64) float64 {
 	return deg * (math.Pi / 180)
+}
+
+var key = []byte("!@#$%123_pLaTfOm____aPp_123^&*()")
+
+func Encrypt(plainText string) (string, error) {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+
+	plainTextBytes := []byte(plainText)
+	blockSize := block.BlockSize()
+	padding := blockSize - len(plainTextBytes)%blockSize
+	padText := bytes.Repeat([]byte{byte(padding)}, padding)
+	plainTextBytes = append(plainTextBytes, padText...)
+
+	cipherText := make([]byte, len(plainTextBytes))
+	mode := cipher.NewCBCEncrypter(block, key[:blockSize])
+	mode.CryptBlocks(cipherText, plainTextBytes)
+
+	return base64.StdEncoding.EncodeToString(cipherText), nil
+}
+
+func Decrypt(cipherText string) (string, error) {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+
+	cipherTextBytes, err := base64.StdEncoding.DecodeString(cipherText)
+	if err != nil {
+		return "", err
+	}
+
+	blockSize := block.BlockSize()
+	if len(cipherTextBytes)%blockSize != 0 {
+		return "", errors.New("invalid cipher text length")
+	}
+
+	plainText := make([]byte, len(cipherTextBytes))
+	mode := cipher.NewCBCDecrypter(block, key[:blockSize])
+	mode.CryptBlocks(plainText, cipherTextBytes)
+
+	padding := int(plainText[len(plainText)-1])
+	if padding > blockSize || padding == 0 {
+		return "", errors.New("invalid padding size")
+	}
+
+	return string(plainText[:len(plainText)-padding]), nil
 }
